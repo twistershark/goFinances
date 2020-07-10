@@ -30,27 +30,44 @@ interface Balance {
 }
 
 const Dashboard: React.FC = () => {
-const [transactions, setTransactions] = useState<Transaction[]>([]);
-const [balance, setBalance] = useState<Balance>({} as Balance);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [balance, setBalance] = useState<Balance>({} as Balance);
 
   useEffect(() => {
     async function loadTransactions(): Promise<void> {
       const response = await api.get('transactions');
-      setBalance(response.data.balance);
-      setTransactions(response.data.transactions);
+
+      const transactionsFormatted = response.data.transactions.map(
+        (transaction: Transaction) => ({
+          ...transaction,
+          formattedValue: formatValue(transaction.value),
+          formattedDate: new Date(transaction.created_at).toLocaleDateString(
+            'pt-br',
+          ),
+        }),
+      );
+
+      const balanceFormatted = {
+        income: formatValue(response.data.balance.income),
+        outcome: formatValue(response.data.balance.outcome),
+        total: formatValue(response.data.balance.total),
+      };
+
+      setBalance(balanceFormatted);
+      setTransactions(transactionsFormatted);
     }
 
     loadTransactions();
   }, []);
 
-  function formatDate(date: Date){
-    const transactionDate = new Date(date);
-    const day = transactionDate.getDay();
-    const monthNumber = (transactionDate.getMonth() + 1);
-    const month = (monthNumber < 10 ? '0' + monthNumber : monthNumber);
-    const year = transactionDate.getFullYear();
-    return (day + '/' + month + '/' + year);
-  }
+  // function formatDate(date: Date) {
+  //   const transactionDate = new Date(date);
+  //   const day = transactionDate.getDay();
+  //   const monthNumber = transactionDate.getMonth() + 1;
+  //   const month = monthNumber < 10 ? `0${monthNumber}` : monthNumber;
+  //   const year = transactionDate.getFullYear();
+  //   return `${day}/${month}/${year}`;
+  // }
 
   return (
     <>
@@ -62,21 +79,21 @@ const [balance, setBalance] = useState<Balance>({} as Balance);
               <p>Entradas</p>
               <img src={income} alt="Income" />
             </header>
-            <h1 data-testid="balance-income">{formatValue(Number(balance.income))}</h1>
+            <h1 data-testid="balance-income">{balance.income}</h1>
           </Card>
           <Card>
             <header>
               <p>Saídas</p>
               <img src={outcome} alt="Outcome" />
             </header>
-            <h1 data-testid="balance-outcome">{formatValue(Number(balance.outcome))}</h1>
+            <h1 data-testid="balance-outcome">{balance.outcome}</h1>
           </Card>
           <Card total>
             <header>
               <p>Total</p>
               <img src={total} alt="Total" />
             </header>
-            <h1 data-testid="balance-total">{formatValue(Number(balance.total))}</h1>
+            <h1 data-testid="balance-total">{balance.total}</h1>
           </Card>
         </CardContainer>
 
@@ -95,10 +112,14 @@ const [balance, setBalance] = useState<Balance>({} as Balance);
               {transactions.map(transaction => (
                 <tr key={transaction.id}>
                   <td className="title">{transaction.title}</td>
-                  <td className={transaction.type}>{(transaction.type === 'income' ? formatValue(transaction.value) : "- " + formatValue(transaction.value))}</td>
+                  <td className={transaction.type}>
+                    {transaction.type === 'income'
+                      ? formatValue(transaction.value)
+                      : `- ${formatValue(transaction.value)}`}
+                  </td>
                   <td>{transaction.category.title}</td>
-                  <td>{formatDate(transaction.created_at)}</td>
-              </tr>
+                  <td>{transaction.formattedDate}</td>
+                </tr>
               ))}
             </tbody>
           </table>
