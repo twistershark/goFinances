@@ -1,14 +1,14 @@
 <h1 align="center">Welcome to GoFinances 💸</h1>
 <p align="center">
-  <img alt="Capa" src="https://github.com/twistershark/goFinances/tree/master/assets/1.png" />
+  <img alt="Capa" src="https://github.com/twistershark/goFinances/blob/master/assets/1.png" />
 </p>
 
 <h1 align="center">
-  <img alt="goFinances" src="https://github.com/twistershark/goFinances/tree/master/assets/2.png" />
+  <img alt="goFinances" src="https://github.com/twistershark/goFinances/blob/master/assets/2.png" />
 </h1>
 
 <h1 align="center">
-  <img alt="goFinances" src="https://github.com/twistershark/goFinances/tree/master/assets/3.png" />
+  <img alt="goFinances" src="https://github.com/twistershark/goFinances/blob/master/assets/3.png" />
 </h1>
 
 
